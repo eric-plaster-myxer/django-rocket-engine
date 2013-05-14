@@ -15,8 +15,13 @@ def setup_env():
     version = subprocess.check_output(['git', 'describe'])
     with open(os.path.join(settings.BASE_DIR, 'VERSION'), 'w') as f:
         f.write(version)
+
+    settings_name = os.environ['DJANGO_SETTINGS_MODULE'].rsplit('.', 1)[-1]
+    env_name = getattr(settings, 'ENV_NAME', settings_name)
+
     context = {
-            'env_name': settings.ENV_NAME,
+            'env_name': env_name,
+            'settings_name': settings_name,
             'version': version.replace('.', '-').replace('/', '-'),
             'tmp': os.environ.get('TMP', ''),
             }
