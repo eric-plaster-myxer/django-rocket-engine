@@ -3,11 +3,14 @@ import sys
 import shutil
 import shlex
 import subprocess
+import traceback
 
 from google.appengine.tools import appcfg
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, handle_default_options
 from django.core.urlresolvers import get_callable
+from django.utils.encoding import smart_str
+from django.core.exceptions import ImproperlyConfigured
 
 from ... import PROJECT_DIR
 
@@ -128,7 +131,25 @@ class Command(BaseCommand):
             self.clean_upload()
 
     def run_from_argv(self, argv):
-        if len(argv) > 2 and argv[2] == 'update':
-            self.update(argv)
-        else:
-            appcfg.main(argv[1:] + [PROJECT_DIR])
+        parser = self.create_parser(argv[0], argv[1])
+        options, args = parser.parse_args(argv[2:])
+        handle_default_options(options)
+
+        if not options.settings or not options.settings.endswith(settings.ENV_NAME):
+            raise ImproperlyConfigured("Settings file has to be specified"
+                " explicitly when deploying")
+
+        stderr = options.get('stderr', sys.stderr)
+
+        try:
+            if len(argv) > 2 and argv[2] == 'update':
+                self.update(argv)
+            else:
+                appcfg.main(argv[1:] + [PROJECT_DIR])
+        except Exception, e:
+            if options.get('traceback', False):
+                traceback.print_exc()
+            else:
+                stderr.write(smart_str(self.style.ERROR('Error: %s\n' % e)))
+            sys.exit(1)
+
