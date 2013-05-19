@@ -139,15 +139,15 @@ class Command(BaseCommand):
             raise ImproperlyConfigured("Settings file has to be specified"
                 " explicitly when deploying")
 
-        stderr = options.get('stderr', sys.stderr)
+        stderr = getattr(options, 'stderr', sys.stderr)
 
         try:
-            if len(argv) > 2 and argv[2] == 'update':
-                self.update(argv)
+            if len(args) > 0 and args[0] == 'update':
+                self.update(argv[0:2]+args)
             else:
-                appcfg.main(argv[1:] + [PROJECT_DIR])
+                appcfg.main(argv[1:2] + args + [PROJECT_DIR])
         except Exception, e:
-            if options.get('traceback', False):
+            if getattr(options, 'traceback', False):
                 traceback.print_exc()
             else:
                 stderr.write(smart_str(self.style.ERROR('Error: %s\n' % e)))
