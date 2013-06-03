@@ -76,12 +76,16 @@ class Command(BaseCommand):
             print "\nPreparing requirements, ...",
             sys.stdout.flush()
             subprocess.Popen(
-                shlex.split(
-                    "%s %s install --requirement=%s --download-cache=%s --target=%s"
-                    % (python_command, pip_command, requirements_file,
-                       virtualenv_cache, virtualenv_appengine_libs)
-                ),
-                stdout=subprocess.PIPE
+                    """
+                    if ! {python} {pip} install --find-links="file://{cache}" --no-index -r "{req}" -t "{target}"; then
+                         {python} {pip} install --no-install -d "{cache}" -r "{req}"
+                         {python} {pip} install --find-links="file://{cache}" --no-index -r "{req}" -t "{target}"
+                    fi """.format(python=python_command,
+                        cache=virtualenv_cache,
+                        pip=pip_command,
+                        req=requirements_file,
+                        target=virtualenv_appengine_libs),
+                shell=True, stdout=subprocess.PIPE
             ).wait()
             print "done.\n"
 
@@ -130,6 +134,21 @@ class Command(BaseCommand):
         finally:
             self.clean_upload()
 
+    def prepare(self):
+       if os.path.exists(requirements_file):
+            print "\nPreparing requirements, no intention to update, ...",
+            sys.stdout.flush()
+            subprocess.Popen(
+                    """
+                         {python} {pip} install --no-install -d "{cache}" -r "{req}"
+                    """.format(python=python_command,
+                        cache=virtualenv_cache,
+                        pip=pip_command,
+                        req=requirements_file,
+                        target=virtualenv_appengine_libs),
+                shell=True
+            ).wait()
+
     def run_from_argv(self, argv):
         parser = self.create_parser(argv[0], argv[1])
         options, args = parser.parse_args(argv[2:])
@@ -144,6 +163,8 @@ class Command(BaseCommand):
         try:
             if len(args) > 0 and args[0] == 'update':
                 self.update(argv[0:2]+args)
+            elif len(args) > 0 and args[0] == 'prepare':
+                self.prepare()
             else:
                 appcfg.main(argv[1:2] + args + [PROJECT_DIR])
         except Exception, e:
