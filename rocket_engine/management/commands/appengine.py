@@ -154,7 +154,7 @@ class Command(BaseCommand):
         options, args = parser.parse_args(argv[2:])
         handle_default_options(options)
 
-        if not options.settings or not options.settings.endswith(settings.ENV_NAME):
+        if not options.settings:# or not options.settings.endswith(settings.ENV_NAME):
             raise ImproperlyConfigured("Settings file has to be specified"
                 " explicitly when deploying")
 
