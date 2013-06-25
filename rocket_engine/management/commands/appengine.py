@@ -85,7 +85,7 @@ class Command(BaseCommand):
                         pip=pip_command,
                         req=requirements_file,
                         target=virtualenv_appengine_libs),
-                shell=True, stdout=subprocess.PIPE
+                shell=True#, stdout=subprocess.PIPE
             ).wait()
             print "done.\n"
 
