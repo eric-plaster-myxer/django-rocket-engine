@@ -113,24 +113,26 @@ class Command(BaseCommand):
             except OSError:
                 pass
 
+    def _update(self, argv):
+        try:
+            get_callable(PRE_UPDATE_HOOK)()
+        except (AttributeError, ImportError):
+            pass
+
+        import ipdb; ipdb.set_trace()
+        appcfg.main(argv[1:] + [PROJECT_DIR])
+
+        try:
+            get_callable(POST_UPDATE_HOOK)()
+        except (AttributeError, ImportError):
+            pass
+
     def update(self, argv):
         self.clean_upload()
 
         try:
             self.prepare_upload()
-
-            try:
-                get_callable(PRE_UPDATE_HOOK)()
-            except (AttributeError, ImportError):
-                pass
-
-            appcfg.main(argv[1:] + [PROJECT_DIR])
-
-            try:
-                get_callable(POST_UPDATE_HOOK)()
-            except (AttributeError, ImportError):
-                pass
-
+            self._update(argv)
         finally:
             self.clean_upload()
 
@@ -165,6 +167,11 @@ class Command(BaseCommand):
                 self.update(argv[0:2]+args)
             elif len(args) > 0 and args[0] == 'prepare':
                 self.prepare()
+            if len(args) > 0 and args[0] == 'updatefast':
+                self._update(argv[0:2]+args)
+            elif len(args) > 0 and args[0] == 'preparefast':
+                self.clean_upload()
+                self.prepare_upload()
             else:
                 appcfg.main(argv[1:2] + args + [PROJECT_DIR])
         except Exception, e:
