@@ -78,7 +78,7 @@ class Command(BaseCommand):
             subprocess.Popen(
                     """
                     if ! {python} {pip} install --find-links="file://{cache}" --no-index -r "{req}" -t "{target}"; then
-                         {python} {pip} install --no-install -d "{cache}" -r "{req}"
+                         {python} {pip} install --exists-action w --no-install -d "{cache}" -r "{req}"
                          {python} {pip} install --find-links="file://{cache}" --no-index -r "{req}" -t "{target}"
                     fi """.format(python=python_command,
                         cache=virtualenv_cache,
@@ -140,7 +140,7 @@ class Command(BaseCommand):
             sys.stdout.flush()
             subprocess.Popen(
                     """
-                         {python} {pip} install --no-install -d "{cache}" -r "{req}"
+                         {python} {pip} install --exists-action w --no-install -d "{cache}" -r "{req}"
                     """.format(python=python_command,
                         cache=virtualenv_cache,
                         pip=pip_command,
