@@ -64,17 +64,17 @@ def path_appendine_sdk():
 
     if not on_appengine_remote:
         # add SQLlite to allowed modules
-        from google.appengine.tools import dev_appserver
+        from google.appengine.tools import dev_appserver_import_hook
         #from google.appengine import dist27
         #dist27.MODULE_OVERRIDES = []
-        dev_appserver.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
+        dev_appserver_import_hook.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
             ('parser', '_ssl', '_io', '_sqlite3', 'os', '_os', 'tempfile'))
 
-        dev_appserver.HardenedModulesHook._MODULE_OVERRIDES['os'] = os.__dict__
-        dev_appserver.HardenedModulesHook._PY27_ALLOWED_MODULES.append('os')
-        dev_appserver.HardenedModulesHook._HardenedModulesHook__PY27_OPTIONAL_ALLOWED_MODULES = {}
-        dev_appserver.FakeFile.NOT_ALLOWED_DIRS = set([])
-        dev_appserver.FakeFile.IsFileAccessible = staticmethod(
+        dev_appserver_import_hook.HardenedModulesHook._MODULE_OVERRIDES['os'] = os.__dict__
+        dev_appserver_import_hook.HardenedModulesHook._PY27_ALLOWED_MODULES.append('os')
+        dev_appserver_import_hook.HardenedModulesHook._HardenedModulesHook__PY27_OPTIONAL_ALLOWED_MODULES = {}
+        dev_appserver_import_hook.FakeFile.NOT_ALLOWED_DIRS = set([])
+        dev_appserver_import_hook.FakeFile.IsFileAccessible = staticmethod(
             lambda *args, **kwargs: True
         )
     else:
