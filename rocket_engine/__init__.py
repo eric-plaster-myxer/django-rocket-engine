@@ -51,9 +51,10 @@ def setup_appendine_sdk():
         sys.path.append(sdk_path)
 
         import dev_appserver
+        from google_sql import GOOGLE_SQL_EXTRA_PATHS
 
         sys.path.extend(dev_appserver.EXTRA_PATHS)
-        sys.path.extend(dev_appserver.GOOGLE_SQL_EXTRA_PATHS)
+        sys.path.extend(GOOGLE_SQL_EXTRA_PATHS)
 
 
 def path_appendine_sdk():
