@@ -172,7 +172,7 @@ class Command(BaseCommand):
             elif action == 'prepare':
                 self.prepare()
             elif action == 'updatefast':
-                self._update(argv[0:2]+args+[action])
+                self._update(argv[0:2]+args+['update'])
             elif action == 'preparefast':
                 self.clean_upload()
                 self.prepare_upload()
