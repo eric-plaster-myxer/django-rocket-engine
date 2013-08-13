@@ -155,6 +155,10 @@ class Command(BaseCommand):
         parser.disable_interspersed_args()
         options, args = parser.parse_args(argv[2:])
         handle_default_options(options)
+        if len(args) < 1:
+            stderr.write(smart_str(self.style.ERROR('Error: appengine action has to be specified\n')))
+
+        action = args.pop(0)
 
         if not options.settings:# or not options.settings.endswith(settings.ENV_NAME):
             raise ImproperlyConfigured("Settings file has to be specified"
@@ -163,17 +167,17 @@ class Command(BaseCommand):
         stderr = getattr(options, 'stderr', sys.stderr)
 
         try:
-            if len(args) > 0 and args[0] == 'update':
-                self.update(argv[0:2]+args)
-            elif len(args) > 0 and args[0] == 'prepare':
+            if action == 'update':
+                self.update(argv[0:2]+args+[action])
+            elif action == 'prepare':
                 self.prepare()
-            if len(args) > 0 and args[0] == 'updatefast':
-                self._update(argv[0:2]+['update']+args[1:])
-            elif len(args) > 0 and args[0] == 'preparefast':
+            elif action == 'updatefast':
+                self._update(argv[0:2]+args+[action])
+            elif action == 'preparefast':
                 self.clean_upload()
                 self.prepare_upload()
             else:
-                appcfg.main(argv[1:2] + args + [PROJECT_DIR])
+                appcfg.main(argv[1:2] + args + [action, PROJECT_DIR])
         except Exception, e:
             if getattr(options, 'traceback', False):
                 traceback.print_exc()
