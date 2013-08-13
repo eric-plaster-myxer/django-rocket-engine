@@ -152,6 +152,7 @@ class Command(BaseCommand):
 
     def run_from_argv(self, argv):
         parser = self.create_parser(argv[0], argv[1])
+        parser.disable_interspersed_args()
         options, args = parser.parse_args(argv[2:])
         handle_default_options(options)
 
