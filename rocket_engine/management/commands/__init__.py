@@ -7,6 +7,7 @@ def setup_env():
     Always generate a new app.yaml by instanciating the template
     """
     import os
+    import glob
     import subprocess
     from django.conf import settings
 
@@ -25,9 +26,12 @@ def setup_env():
             'version': version.replace('.', '-').replace('/', '-'),
             'tmp': os.environ.get('TMP', ''),
             }
-    with open(os.path.join(settings.BASE_DIR, 'app.template.yaml'), 'r') as template:
-        with open(os.path.join(settings.BASE_DIR, 'app.yaml'), 'w') as target:
-            target.write(Template(template.read()).render(Context(context)))
+    for tmpl_name in glob.glob(os.path.join(settings.BASE_DIR, '*.template.yaml')):
+        with open(tmpl_name, 'r') as template:
+            with open(os.path.join(settings.BASE_DIR,
+                            '{}.yaml'.format(os.path.basename(tmpl_name).split('.')[0])),
+                'w') as target:
+                target.write(Template(template.read()).render(Context(context)))
 
 
 setup_env()
