@@ -166,9 +166,9 @@ class Command(BaseCommand):
                 self.update(argv[0:2]+args)
             elif len(args) > 0 and args[0] == 'prepare':
                 self.prepare()
-            if len(args) > 0 and args[0] == 'updatebackends':
+            elif len(args) > 0 and args[0] == 'updatebackends':
                 self._update(argv[0:2]+['--backends', 'update']+args[1:])
-            if len(args) > 0 and args[0] == 'updatefast':
+            elif len(args) > 0 and args[0] == 'updatefast':
                 self._update(argv[0:2]+['update']+args[1:])
             elif len(args) > 0 and args[0] == 'preparefast':
                 self.clean_upload()
