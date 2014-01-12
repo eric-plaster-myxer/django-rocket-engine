@@ -67,7 +67,8 @@ def path_appendine_sdk():
         #from google.appengine import dist27
         #dist27.MODULE_OVERRIDES = []
         dev_appserver.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
-            ('parser', '_ssl', '_io', '_sqlite3', 'os', '_os', 'tempfile'))
+            ('parser', '_ssl', '_io', '_sqlite3', 'os', '_os', 'tempfile',
+            'lxml', 'lxml.etree'))
 
         dev_appserver.HardenedModulesHook._MODULE_OVERRIDES['os'] = os.__dict__
         dev_appserver.HardenedModulesHook._PY27_ALLOWED_MODULES.append('os')
