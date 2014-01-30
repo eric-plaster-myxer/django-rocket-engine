@@ -68,7 +68,7 @@ def path_appendine_sdk():
         #dist27.MODULE_OVERRIDES = []
         dev_appserver.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
             ('parser', '_ssl', '_io', '_sqlite3', 'os', '_os', 'tempfile',
-            'lxml', 'lxml.etree'))
+            'etree'))
 
         dev_appserver.HardenedModulesHook._MODULE_OVERRIDES['os'] = os.__dict__
         dev_appserver.HardenedModulesHook._PY27_ALLOWED_MODULES.append('os')
