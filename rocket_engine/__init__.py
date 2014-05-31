@@ -51,9 +51,10 @@ def setup_appendine_sdk():
         sys.path.append(sdk_path)
 
         import dev_appserver
+        from google_sql import GOOGLE_SQL_EXTRA_PATHS
 
         sys.path.extend(dev_appserver.EXTRA_PATHS)
-        sys.path.extend(dev_appserver.GOOGLE_SQL_EXTRA_PATHS)
+        sys.path.extend(GOOGLE_SQL_EXTRA_PATHS)
 
 
 def path_appendine_sdk():
@@ -63,18 +64,18 @@ def path_appendine_sdk():
 
     if not on_appengine_remote:
         # add SQLlite to allowed modules
-        from google.appengine.tools import dev_appserver
+        from google.appengine.tools import dev_appserver_import_hook
         #from google.appengine import dist27
         #dist27.MODULE_OVERRIDES = []
         dev_appserver.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
             ('parser', '_ssl', '_io', '_sqlite3', 'os', '_os', 'tempfile',
             'etree'))
 
-        dev_appserver.HardenedModulesHook._MODULE_OVERRIDES['os'] = os.__dict__
-        dev_appserver.HardenedModulesHook._PY27_ALLOWED_MODULES.append('os')
-        dev_appserver.HardenedModulesHook._HardenedModulesHook__PY27_OPTIONAL_ALLOWED_MODULES = {}
-        dev_appserver.FakeFile.NOT_ALLOWED_DIRS = set([])
-        dev_appserver.FakeFile.IsFileAccessible = staticmethod(
+        dev_appserver_import_hook.HardenedModulesHook._MODULE_OVERRIDES['os'] = os.__dict__
+        dev_appserver_import_hook.HardenedModulesHook._PY27_ALLOWED_MODULES.append('os')
+        dev_appserver_import_hook.HardenedModulesHook._HardenedModulesHook__PY27_OPTIONAL_ALLOWED_MODULES = {}
+        dev_appserver_import_hook.FakeFile.NOT_ALLOWED_DIRS = set([])
+        dev_appserver_import_hook.FakeFile.IsFileAccessible = staticmethod(
             lambda *args, **kwargs: True
         )
     else:

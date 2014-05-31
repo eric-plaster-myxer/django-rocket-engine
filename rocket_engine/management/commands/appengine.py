@@ -156,15 +156,13 @@ class Command(BaseCommand):
         options, args = parser.parse_args(argv[2:])
         handle_default_options(options)
         if len(args) < 1:
-            stderr.write(smart_str(self.style.ERROR('Error: appengine action has to be specified\n')))
+            sys.stderr.write(smart_str(self.style.ERROR('Error: appengine action has to be specified\n')))
 
         action = args.pop(0)
 
         if not options.settings:# or not options.settings.endswith(settings.ENV_NAME):
             raise ImproperlyConfigured("Settings file has to be specified"
                 " explicitly when deploying")
-
-        stderr = getattr(options, 'stderr', sys.stderr)
 
         try:
             if action == 'update':
@@ -173,6 +171,8 @@ class Command(BaseCommand):
                 self.prepare()
             elif action == 'updatefast':
                 self._update(argv[0:2]+args+['update'])
+            elif action == 'updatebackends':
+                self._update(argv[0:2]+['--backends', 'update']+args[1:])
             elif action == 'preparefast':
                 self.clean_upload()
                 self.prepare_upload()
@@ -182,6 +182,6 @@ class Command(BaseCommand):
             if getattr(options, 'traceback', False):
                 traceback.print_exc()
             else:
-                stderr.write(smart_str(self.style.ERROR('Error: %s\n' % e)))
+                sys.stderr.write(smart_str(self.style.ERROR('Error: %s\n' % e)))
             sys.exit(1)
 
