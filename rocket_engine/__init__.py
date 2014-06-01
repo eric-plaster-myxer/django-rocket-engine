@@ -5,8 +5,8 @@ import sys
 from django.core.handlers.wsgi import WSGIHandler
 from django.core import signals
 
-on_appengine_remote = os.getenv('SERVER_SOFTWARE','')\
-                        .startswith('Google App Engine')
+on_appengine_remote = os.getenv('SERVER_SOFTWARE', '')\
+    .startswith('Google App Engine')
 
 on_appengine = on_appengine_remote
 os.path.abspath(os.curdir)
@@ -16,18 +16,18 @@ PROJECT_DIR = os.path.abspath(os.getcwd())
 
 def get_appengine_sdk_path():
     typical_sdk_paths = [
-        os.environ.get('APP_ENGINE_SDK',""),
+        os.environ.get('APP_ENGINE_SDK', ""),
         '/usr/local/google_appengine',
         '/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine'
     ] + os.environ.get('PATH', '').split(os.pathsep)
 
     # List of files which will be used as a test for SQK lookup.
     is_appengine_sdk = lambda path: all([
-      x in os.listdir(path) for x in [
-          'appcfg.py',
-          'dev_appserver.py',
-          'google'
-      ]
+        x in os.listdir(path) for x in [
+            'appcfg.py',
+            'dev_appserver.py',
+            'google'
+        ]
     ])
 
     for path in typical_sdk_paths:
@@ -65,12 +65,11 @@ def path_appendine_sdk():
     if not on_appengine_remote:
         # add SQLlite to allowed modules
         from google.appengine.tools import dev_appserver_import_hook
-        import dev_appserver
         #from google.appengine import dist27
         #dist27.MODULE_OVERRIDES = []
-        dev_appserver.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
+        dev_appserver_import_hook.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
             ('parser', '_ssl', '_io', '_sqlite3', 'os', '_os', 'tempfile',
-            'etree'))
+             'etree'))
 
         dev_appserver_import_hook.HardenedModulesHook._MODULE_OVERRIDES['os'] = os.__dict__
         dev_appserver_import_hook.HardenedModulesHook._PY27_ALLOWED_MODULES.append('os')
@@ -92,6 +91,6 @@ def path_appendine_sdk():
 
 if not on_appengine_remote:
     setup_appendine_sdk()
-path_appendine_sdk()
+    path_appendine_sdk()
 
 wsgi = WSGIHandler()
