@@ -65,6 +65,7 @@ def path_appendine_sdk():
     if not on_appengine_remote:
         # add SQLlite to allowed modules
         from google.appengine.tools import dev_appserver_import_hook
+        import dev_appserver
         #from google.appengine import dist27
         #dist27.MODULE_OVERRIDES = []
         dev_appserver.HardenedModulesHook._WHITE_LIST_C_MODULES.extend(
